@@ -15,7 +15,12 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:9430", "http://127.0.0.1:9430"],
+    origin: [
+      "http://localhost:9430",
+      "http://127.0.0.1:9430",
+      "https://customer-relationship-management-system-fy7k.onrender.com",
+      "https://*.onrender.com",
+    ],
     credentials: true,
   })
 );
