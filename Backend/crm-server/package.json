@@ -2,6 +2,10 @@
   "name": "crm-server",
   "version": "1.0.0",
   "description": "PropFlow CRM API",
+  "packageManager": "npm@10.9.2",
+  "engines": {
+    "node": "22.x"
+  },
   "main": "dist/src/index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only --prefer-ts src/index.ts",
