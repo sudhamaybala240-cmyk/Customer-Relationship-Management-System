@@ -34,6 +34,7 @@ User.init(
     tenantId: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
+      field: "tenant_id",
     },
 
     name: {

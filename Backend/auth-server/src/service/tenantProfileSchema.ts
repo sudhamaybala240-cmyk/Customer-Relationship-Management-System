@@ -66,6 +66,12 @@ export const ensureTenantProfileSchema = async () => {
       allowNull: true,
     });
   }
+  if (!userColumns.tenant_id) {
+    await queryInterface.addColumn("users", "tenant_id", {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: true,
+    });
+  }
   if (!userColumns.passwordHash) {
     await queryInterface.addColumn("users", "passwordHash", {
       type: DataTypes.STRING(255),
