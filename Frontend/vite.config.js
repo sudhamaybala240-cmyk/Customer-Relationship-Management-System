@@ -1,15 +1,12 @@
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
+import {
+  DEFAULT_AUTH_API_URL,
+  DEFAULT_CRM_API_URL,
+  DEFAULT_SOCKET_URL,
+} from './src/config/deploymentDefaults.js'
 
-const validateProductionUrl = (name, pathSuffix) => {
-  const value = process.env[name]?.trim()
-
-  if (!value) {
-    throw new Error(
-      `${name} is required on Vercel. Set it to the public deployed service URL, then redeploy.`
-    )
-  }
-
+const validateProductionUrl = (name, value, pathSuffix) => {
   let url
   try {
     url = new URL(value)
@@ -38,11 +35,24 @@ const validateProductionUrl = (name, pathSuffix) => {
   return url
 }
 
-export default defineConfig(() => {
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+
   if (process.env.VERCEL === '1') {
-    const authUrl = validateProductionUrl('VITE_AUTH_API_URL', '/api/auth')
-    const crmUrl = validateProductionUrl('VITE_CRM_API_URL', '/api')
-    validateProductionUrl('VITE_SOCKET_URL')
+    const authUrl = validateProductionUrl(
+      'VITE_AUTH_API_URL',
+      env.VITE_AUTH_API_URL?.trim() || DEFAULT_AUTH_API_URL,
+      '/api/auth'
+    )
+    const crmUrl = validateProductionUrl(
+      'VITE_CRM_API_URL',
+      env.VITE_CRM_API_URL?.trim() || DEFAULT_CRM_API_URL,
+      '/api'
+    )
+    validateProductionUrl(
+      'VITE_SOCKET_URL',
+      env.VITE_SOCKET_URL?.trim() || DEFAULT_SOCKET_URL
+    )
 
     if (authUrl.origin === crmUrl.origin) {
       throw new Error(

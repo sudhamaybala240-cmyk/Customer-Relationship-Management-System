@@ -28,8 +28,10 @@ https://customer-relationship-management-sy-nine.vercel.app,https://customer-rel
 
 The service listens on Render's assigned `PORT`. `/api/health` returns HTTP
 503 until the auth database connection and schema initialization succeed; it
-must return HTTP 200 before signup or login can work.
+must return HTTP 200 before signup or login can work. If initialization fails
+temporarily, the service retries with increasing delays (up to one minute).
+Correcting environment variables still requires a Render redeploy.
 
 In Vercel, set `VITE_AUTH_API_URL` to
-`https://customer-relationship-management-system-1-333w.onrender.com/api/auth`
+`https://customer-relationship-management-system-04ec.onrender.com/api/auth`
 for Production, Preview, and Development, then redeploy the frontend.

@@ -16,13 +16,16 @@ install command, `npm run build` as the build command, and `dist` as the
 output directory.
 
 Set these variables for **Production**, **Preview**, and **Development** in
-Vercel, then redeploy:
+Vercel, then redeploy. The frontend also has defaults for the currently
+configured Render services, so an unset variable does not silently send
+production API calls to the Vercel domain or `localhost`. Set the variables
+when changing service URLs:
 
 | Variable | Value |
 | --- | --- |
-| `VITE_AUTH_API_URL` | `https://customer-relationship-management-system-1-333w.onrender.com/api/auth` |
-| `VITE_CRM_API_URL` | `https://customer-relationship-management-system-fy7k.onrender.com/api` |
-| `VITE_SOCKET_URL` | `https://customer-relationship-management-system-fy7k.onrender.com` |
+| `VITE_AUTH_API_URL` | `https://customer-relationship-management-system-04ec.onrender.com/api/auth` |
+| `VITE_CRM_API_URL` | `https://customer-relationship-management-system-1-o1gp.onrender.com/api` |
+| `VITE_SOCKET_URL` | `https://customer-relationship-management-system-1-o1gp.onrender.com` |
 
 The auth and CRM backends are separate services in this repository. Use the
 public URL of each corresponding deployed service; do not point both variables
@@ -48,9 +51,9 @@ The backend CORS configuration allows the following frontend origins:
 Set `FRONTEND_URL` or comma-separated `FRONTEND_URLS` on each backend service
 when deploying from any additional frontend origin. On the Render CRM service,
 also set `AUTH_SERVER_URL` to
-`https://customer-relationship-management-system-1-333w.onrender.com` and
+`https://customer-relationship-management-system-04ec.onrender.com` and
 `JWKS_URL` to
-`https://customer-relationship-management-system-1-333w.onrender.com/.well-known/jwks.json`
+`https://customer-relationship-management-system-04ec.onrender.com/.well-known/jwks.json`
 so the CRM can validate tokens issued by the auth service.
 
 ## Local development

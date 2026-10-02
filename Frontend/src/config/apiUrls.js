@@ -1,5 +1,12 @@
-const configuredAuthApiUrl = import.meta.env.VITE_AUTH_API_URL?.trim();
-const configuredCrmApiUrl = import.meta.env.VITE_CRM_API_URL?.trim();
+import {
+  DEFAULT_AUTH_API_URL,
+  DEFAULT_CRM_API_URL,
+} from "./deploymentDefaults";
+
+const configuredAuthApiUrl =
+  import.meta.env.VITE_AUTH_API_URL?.trim() || DEFAULT_AUTH_API_URL;
+const configuredCrmApiUrl =
+  import.meta.env.VITE_CRM_API_URL?.trim() || DEFAULT_CRM_API_URL;
 
 const normalizeBaseUrl = (value) => value?.replace(/\/+$/, "");
 
@@ -20,7 +27,7 @@ const authAndCrmShareOrigin = (() => {
 })();
 
 export const isAuthApiConfigured =
-  Boolean(configuredAuthApiUrl) && !authAndCrmShareOrigin;
+  !authAndCrmShareOrigin;
 
 export const getAuthApiConfigurationError = () =>
   "Authentication is not configured correctly. Set VITE_AUTH_API_URL in Vercel to the separate deployed auth service URL ending in /api/auth (not the CRM service), then redeploy.";

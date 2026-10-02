@@ -34,15 +34,18 @@ a public TCP proxy on your plan, deploy the CRM API on Railway in the same
 private network as MySQL. A Render PostgreSQL URL is not compatible with this
 MySQL service.
 
-The API allows the two supplied Vercel origins by default. You can also set
+The API allows the supplied Vercel origins by default. You can also set
 `FRONTEND_URL` or comma-separated `FRONTEND_URLS` to additional exact origins.
 For the separate deployed auth service, set `AUTH_SERVER_URL` to
-`https://customer-relationship-management-system-1-333w.onrender.com` and
+`https://customer-relationship-management-system-04ec.onrender.com` and
 `JWKS_URL` to
-`https://customer-relationship-management-system-1-333w.onrender.com/.well-known/jwks.json`
+`https://customer-relationship-management-system-04ec.onrender.com/.well-known/jwks.json`
 in the Render CRM service's environment settings. Redeploy after changing
 environment variables.
 
 The service opens its HTTP port before initializing MySQL. Its `/health`
 endpoint returns HTTP 503 until the database connection, schema initialization,
 and startup checks succeed, so Render can report database readiness accurately.
+If initialization fails temporarily, the service retries with increasing
+delays (up to one minute). Correcting environment variables still requires a
+Render redeploy.
