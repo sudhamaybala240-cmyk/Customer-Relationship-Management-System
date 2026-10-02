@@ -20,6 +20,32 @@ export const ensureTenantProfileSchema = async () => {
       defaultValue: false,
     });
   }
+  if (!columns.slug) {
+    await queryInterface.addColumn("tenant_profiles", "slug", {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+      unique: true,
+    });
+  }
+  if (!columns.status) {
+    await queryInterface.addColumn("tenant_profiles", "status", {
+      type: DataTypes.ENUM("ACTIVE", "SUSPENDED"),
+      allowNull: false,
+      defaultValue: "ACTIVE",
+    });
+  }
+  if (!columns.createdAt) {
+    await queryInterface.addColumn("tenant_profiles", "createdAt", {
+      type: DataTypes.DATE,
+      allowNull: true,
+    });
+  }
+  if (!columns.updatedAt) {
+    await queryInterface.addColumn("tenant_profiles", "updatedAt", {
+      type: DataTypes.DATE,
+      allowNull: true,
+    });
+  }
 
   const userColumns = await queryInterface.describeTable("users");
   if (!userColumns.tenantId) {
@@ -40,6 +66,12 @@ export const ensureTenantProfileSchema = async () => {
       allowNull: true,
     });
   }
+  if (!userColumns.updatedAt) {
+    await queryInterface.addColumn("users", "updatedAt", {
+      type: DataTypes.DATE,
+      allowNull: true,
+    });
+  }
   if (!userColumns.status) {
     await queryInterface.addColumn("users", "status", {
       type: DataTypes.ENUM("ACTIVE", "DEACTIVATED"),
@@ -49,6 +81,26 @@ export const ensureTenantProfileSchema = async () => {
   }
   if (!userColumns.lastLoginAt) {
     await queryInterface.addColumn("users", "lastLoginAt", {
+      type: DataTypes.DATE,
+      allowNull: true,
+    });
+  }
+
+  const tenantColumns = await queryInterface.describeTable("tenants");
+  if (!tenantColumns.name) {
+    await queryInterface.addColumn("tenants", "name", {
+      type: DataTypes.STRING(150),
+      allowNull: true,
+    });
+  }
+  if (!tenantColumns.createdAt) {
+    await queryInterface.addColumn("tenants", "createdAt", {
+      type: DataTypes.DATE,
+      allowNull: true,
+    });
+  }
+  if (!tenantColumns.updatedAt) {
+    await queryInterface.addColumn("tenants", "updatedAt", {
       type: DataTypes.DATE,
       allowNull: true,
     });
