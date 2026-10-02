@@ -68,9 +68,7 @@ export const getDatabaseConfig = (env: NodeJS.ProcessEnv = process.env) => {
   const databaseUrl = firstDefined(
     env,
     "AUTH_MYSQL_PUBLIC_URL",
-    "MYSQL_PUBLIC_URL",
     "AUTH_DATABASE_URL",
-    "DATABASE_URL",
     "MYSQL_URL",
   );
   if (databaseUrl) {
@@ -95,7 +93,7 @@ export const getDatabaseConfig = (env: NodeJS.ProcessEnv = process.env) => {
     ].filter(Boolean);
     throw new Error(
       `Missing auth MySQL environment variable(s): ${missing.join(", ")}. ` +
-      "Set AUTH_MYSQL_PUBLIC_URL or AUTH_DATABASE_URL to a reachable URL for the dedicated auth database.",
+      "Set AUTH_MYSQL_PUBLIC_URL or AUTH_DATABASE_URL to a reachable URL for the dedicated auth database; generic CRM DATABASE_URL settings are not used.",
     );
   }
 

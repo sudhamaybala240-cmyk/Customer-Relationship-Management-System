@@ -68,3 +68,13 @@ test("reports missing auth database configuration clearly", () => {
     /Set AUTH_MYSQL_PUBLIC_URL or AUTH_DATABASE_URL/,
   );
 });
+
+test("does not use generic CRM database URLs as the auth database", () => {
+  assert.throws(
+    () =>
+      getDatabaseConfig({
+        DATABASE_URL: "mysql://crm-user:crm-password@crm.example.net:3306/crm",
+      }),
+    /generic CRM DATABASE_URL settings are not used/,
+  );
+});
