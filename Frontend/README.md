@@ -20,7 +20,7 @@ Vercel, then redeploy:
 
 | Variable | Value |
 | --- | --- |
-| `VITE_AUTH_API_URL` | Auth backend origin plus `/api/auth` (must be a separately deployed auth service) |
+| `VITE_AUTH_API_URL` | `https://customer-relationship-management-system-1-333w.onrender.com/api/auth` |
 | `VITE_CRM_API_URL` | `https://customer-relationship-management-system-fy7k.onrender.com/api` |
 | `VITE_SOCKET_URL` | `https://customer-relationship-management-system-fy7k.onrender.com` |
 
@@ -43,9 +43,15 @@ The backend CORS configuration allows the following frontend origins:
 - `https://customer-relationship-management-system-b7qvwpq7c.vercel.app`
 - `https://customer-relationship-managemen-git-5f3c3d-sudhamaybala240-cmyk.vercel.app`
 - `https://customer-relationship-management-sy-nine.vercel.app`
+- `https://customer-relationship-management-system-exb9ik7hu.vercel.app`
 
 Set `FRONTEND_URL` or comma-separated `FRONTEND_URLS` on each backend service
-when deploying from any additional frontend origin.
+when deploying from any additional frontend origin. On the Render CRM service,
+also set `AUTH_SERVER_URL` to
+`https://customer-relationship-management-system-1-333w.onrender.com` and
+`JWKS_URL` to
+`https://customer-relationship-management-system-1-333w.onrender.com/.well-known/jwks.json`
+so the CRM can validate tokens issued by the auth service.
 
 ## Local development
 

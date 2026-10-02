@@ -14,7 +14,7 @@ In the auth API service's **Variables** tab, add:
 - `AUTH_DATABASE_URL=${{<AuthMySQLService>.MYSQL_URL}}`, replacing the
   placeholder with the exact name of the dedicated auth MySQL service.
 - `FRONTEND_URLS` set to the comma-separated Vercel origins:
-  `https://customer-relationship-management-system-b7qvwpq7c.vercel.app,https://customer-relationship-managemen-git-5f3c3d-sudhamaybala240-cmyk.vercel.app`
+  `https://customer-relationship-management-sy-nine.vercel.app,https://customer-relationship-management-system-b7qvwpq7c.vercel.app,https://customer-relationship-managemen-git-5f3c3d-sudhamaybala240-cmyk.vercel.app,https://customer-relationship-management-system-exb9ik7hu.vercel.app`
 
 The reference must be configured on the auth API service, and the MySQL URL
 must resolve to a reachable database. The service listens on Railway's assigned

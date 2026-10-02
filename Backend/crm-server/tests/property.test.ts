@@ -3,8 +3,10 @@ import app from "../src/app";
 
 describe("Property API", () => {
   it.each([
+    "https://customer-relationship-management-sy-nine.vercel.app",
     "https://customer-relationship-management-system-b7qvwpq7c.vercel.app",
     "https://customer-relationship-managemen-git-5f3c3d-sudhamaybala240-cmyk.vercel.app",
+    "https://customer-relationship-management-system-exb9ik7hu.vercel.app",
   ])("allows browser requests from %s", async (origin) => {
     const response = await request(app)
       .options("/api/properties")

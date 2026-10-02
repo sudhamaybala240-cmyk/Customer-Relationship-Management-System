@@ -19,6 +19,7 @@ const defaultAllowedOrigins = [
   "https://customer-relationship-management-sy-nine.vercel.app",
   "https://customer-relationship-management-system-b7qvwpq7c.vercel.app",
   "https://customer-relationship-managemen-git-5f3c3d-sudhamaybala240-cmyk.vercel.app",
+  "https://customer-relationship-management-system-exb9ik7hu.vercel.app",
 ];
 const configuredOrigins = [
   process.env.FRONTEND_URL,
