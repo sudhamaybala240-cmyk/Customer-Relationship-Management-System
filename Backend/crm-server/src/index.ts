@@ -1,7 +1,7 @@
 import http from "http";
 import app, { setDatabaseReady } from "./app";
 import { env } from "./config/env";
-import sequelize from "./config/database";
+import sequelize, { assertDatabaseConfigured } from "./config/database";
 import ensurePropertySchema from "./config/propertySchema";
 import redis from "./config/redis";
 import setupSocket from "./sockets/socket";
@@ -26,6 +26,7 @@ const startServer = async () => {
   }
 
   try {
+    assertDatabaseConfigured();
     await sequelize.authenticate();
     console.log("MySQL database connected successfully");
     await sequelize.sync();
@@ -41,7 +42,7 @@ const startServer = async () => {
   } catch (error) {
     setDatabaseReady(false);
     console.error(
-      "CRM database initialization failed. In Render, set DATABASE_URL to a reachable MySQL URL (mysql://...), not localhost. The service is listening, but /health will return 503 until the database is available.",
+      "CRM database initialization failed. Set DATABASE_URL or MYSQL_URL to a reachable mysql:// URL, or map MYSQLHOST, MYSQLPORT, MYSQLDATABASE, MYSQLUSER, and MYSQLPASSWORD into this service. Do not use localhost for a separately hosted database. The service is listening, but /health will return 503 until initialization succeeds.",
       error,
     );
   }

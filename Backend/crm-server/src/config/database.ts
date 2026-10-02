@@ -90,7 +90,28 @@ export const getDatabaseConfig = (env: NodeJS.ProcessEnv = process.env): Databas
   };
 };
 
-const dbConfig = getDatabaseConfig();
+let databaseConfigurationError: Error | undefined;
+const dbConfig = (() => {
+  try {
+    return getDatabaseConfig();
+  } catch (error) {
+    databaseConfigurationError =
+      error instanceof Error ? error : new Error(String(error));
+    return {
+      host: "127.0.0.1",
+      port: 3306,
+      database: "crm_unconfigured",
+      user: "unconfigured",
+      password: "unconfigured",
+    };
+  }
+})();
+
+export const assertDatabaseConfigured = () => {
+  if (databaseConfigurationError) {
+    throw databaseConfigurationError;
+  }
+};
 
 const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
   host: dbConfig.host,
