@@ -22,6 +22,12 @@ export const ensureTenantProfileSchema = async () => {
   }
 
   const userColumns = await queryInterface.describeTable("users");
+  if (!userColumns.tenantId) {
+    await queryInterface.addColumn("users", "tenantId", {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: true,
+    });
+  }
   if (!userColumns.status) {
     await queryInterface.addColumn("users", "status", {
       type: DataTypes.ENUM("ACTIVE", "DEACTIVATED"),

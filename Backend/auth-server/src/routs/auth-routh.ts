@@ -191,6 +191,12 @@ router.post("/login", async (req, res) => {
       });
     }
 
+    if (!Number.isInteger(user.tenantId)) {
+      return res.status(409).json({
+        message: "This account is not assigned to a workspace. Contact an administrator.",
+      });
+    }
+
     const tenantProfile = await TenantProfile.findByPk(user.tenantId);
     if (tenantProfile?.status === "SUSPENDED") {
       return res.status(403).json({ message: "This workspace is suspended." });
