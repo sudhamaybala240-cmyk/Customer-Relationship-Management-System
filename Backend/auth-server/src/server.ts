@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import express, { Request, Response } from "express";
 import cors from "cors";
-import sequelize, { ensureDatabaseExists } from "./config/database";
+import sequelize, { assertDatabaseConfigured } from "./config/database";
 import authRoutes from "./routs/auth-routh";
 import { getAuthKeys } from "./auth/keys";
 import { ensureTenantProfileSchema } from "./service/tenantProfileSchema";
@@ -10,6 +10,7 @@ import { ensureTenantProfileSchema } from "./service/tenantProfileSchema";
 dotenv.config();
 
 const app = express();
+let databaseReady = false;
 
 const port = Number(process.env.PORT ?? 5000);
 const allowedOrigins = [
@@ -32,8 +33,8 @@ app.use("/api/auth", authRoutes);
 
 // Health check
 app.get("/api/health", (_req: Request, res: Response) => {
-  res.json({
-    status: "ok",
+  res.status(databaseReady ? 200 : 503).json({
+    status: databaseReady ? "ok" : "database_unavailable",
     service: "auth-server",
     timestamp: new Date().toISOString(),
   });
@@ -41,30 +42,29 @@ app.get("/api/health", (_req: Request, res: Response) => {
 
 // Start server
 const startServer = async () => {
+  const server = app.listen(port, () => {
+    console.log(`Auth server listening on port ${port}`);
+  });
+  server.on("error", (error) => {
+    console.error(`Auth server failed to listen on port ${port}:`, error);
+    process.exitCode = 1;
+  });
+
   try {
-    const databaseReady = await ensureDatabaseExists();
+    assertDatabaseConfigured();
+    await sequelize.authenticate();
+    console.log("MySQL database connected successfully");
 
-    if (databaseReady) {
-      await sequelize.authenticate();
-
-      console.log("MySQL database connected successfully");
-
-      await sequelize.sync();
-      await ensureTenantProfileSchema();
-
-      console.log("Database tables synchronized");
-    } else {
-      console.warn(
-        "MySQL database is unavailable; server will continue in demo mode."
-      );
-    }
-
-    app.listen(port, () => {
-      console.log(`Auth server running on http://localhost:${port}`);
-    });
+    await sequelize.sync();
+    await ensureTenantProfileSchema();
+    console.log("Database tables synchronized");
+    databaseReady = true;
   } catch (error) {
-    console.error("Unable to connect to MySQL:", error);
-    process.exit(1);
+    databaseReady = false;
+    console.error(
+      "Auth database initialization failed. Set AUTH_DATABASE_URL to a reachable MySQL database reserved for auth (not the CRM database). /api/health will return 503 until the database is ready.",
+      error,
+    );
   }
 };
 

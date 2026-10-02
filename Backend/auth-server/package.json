@@ -2,6 +2,10 @@
   "name": "auth-server",
   "version": "1.0.0",
   "description": "Authentication backend for the CRM app",
+  "packageManager": "npm@10.9.2",
+  "engines": {
+    "node": "22.x"
+  },
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx src/server.ts",
