@@ -3,6 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import "../style/Login.css";
 import { useLoginMutation } from "../store/api/AuthApi";
+import {
+  getAuthApiConfigurationError,
+  getAuthApiUnavailableError,
+  isAuthApiConfigured,
+} from "../config/apiUrls";
 import { setCredentials } from "../store/slices/authSlice";
 import { setAccessToken, setRefreshToken } from "../store/authToken";
 
@@ -45,6 +50,11 @@ function Login() {
     setLocked(false);
     setRetryAfter(0);
     setSuccess("");
+
+    if (import.meta.env.PROD && !isAuthApiConfigured) {
+      setError(getAuthApiConfigurationError());
+      return;
+    }
 
     try {
       const result = await login({
@@ -113,9 +123,7 @@ function Login() {
       }
 
       if (error?.status === "FETCH_ERROR") {
-        setError(
-          "Unable to reach the auth server. Please check that the authentication backend is running on localhost:5000."
-        );
+        setError(getAuthApiUnavailableError());
         return;
       }
 

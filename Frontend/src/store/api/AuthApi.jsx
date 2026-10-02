@@ -1,8 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getAccessToken, getRefreshToken } from "../authToken";
-
-const AUTH_API_URL =
-  import.meta.env.VITE_AUTH_API_URL || "/api/auth";
+import { AUTH_API_URL } from "../../config/apiUrls";
 
 const authBaseQuery = fetchBaseQuery({
   baseUrl: AUTH_API_URL,

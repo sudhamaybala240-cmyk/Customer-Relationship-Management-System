@@ -30,6 +30,11 @@ to one service unless that service is explicitly configured to host both APIs.
 These `VITE_` values are embedded at build time, so changing them requires a
 new deployment.
 
+`VITE_AUTH_API_URL` must be set for the production Vercel deployment. The auth
+API is a separate backend service from the CRM API; the production frontend
+does not use `localhost:5000`. If the auth URL is missing, the login page now
+shows a Vercel configuration message instead of attempting a local URL.
+
 Configure `FRONTEND_URL` on both backend services to the frontend origin, for
 example `https://customer-relationship-management-sy-nine.vercel.app`. The
 backend CORS configuration allows that origin and the local development

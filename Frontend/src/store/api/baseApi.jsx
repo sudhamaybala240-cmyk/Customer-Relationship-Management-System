@@ -10,11 +10,7 @@ import {
   setAccessToken,
   setRefreshToken,
 } from "../authToken";
-
-const CRM_API_URL =
-  import.meta.env.VITE_CRM_API_URL || "/api";
-const AUTH_API_URL =
-  import.meta.env.VITE_AUTH_API_URL || "/api/auth";
+import { AUTH_API_URL, CRM_API_URL } from "../../config/apiUrls";
 
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: CRM_API_URL,
