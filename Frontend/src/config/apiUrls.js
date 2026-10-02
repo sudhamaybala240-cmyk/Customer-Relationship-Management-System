@@ -1,15 +1,29 @@
 const configuredAuthApiUrl = import.meta.env.VITE_AUTH_API_URL?.trim();
+const configuredCrmApiUrl = import.meta.env.VITE_CRM_API_URL?.trim();
 
 const normalizeBaseUrl = (value) => value?.replace(/\/+$/, "");
 
 export const AUTH_API_URL = normalizeBaseUrl(configuredAuthApiUrl) || "/api/auth";
 export const CRM_API_URL =
-  normalizeBaseUrl(import.meta.env.VITE_CRM_API_URL?.trim()) || "/api";
+  normalizeBaseUrl(configuredCrmApiUrl) || "/api";
 
-export const isAuthApiConfigured = Boolean(configuredAuthApiUrl);
+const authAndCrmShareOrigin = (() => {
+  if (!configuredAuthApiUrl || !configuredCrmApiUrl) {
+    return false;
+  }
+
+  try {
+    return new URL(configuredAuthApiUrl).origin === new URL(configuredCrmApiUrl).origin;
+  } catch {
+    return false;
+  }
+})();
+
+export const isAuthApiConfigured =
+  Boolean(configuredAuthApiUrl) && !authAndCrmShareOrigin;
 
 export const getAuthApiConfigurationError = () =>
-  "Authentication API URL is not configured for this deployment. Set VITE_AUTH_API_URL in Vercel to the deployed auth service URL ending in /api/auth, then redeploy.";
+  "Authentication is not configured correctly. Set VITE_AUTH_API_URL in Vercel to the separate deployed auth service URL ending in /api/auth (not the CRM service), then redeploy.";
 
 export const getAuthApiUnavailableError = () =>
   "Unable to reach the authentication service. Check that VITE_AUTH_API_URL points to the deployed auth service, that the service is running, and that its CORS settings allow this frontend.";
