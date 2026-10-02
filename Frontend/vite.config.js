@@ -34,13 +34,21 @@ const validateProductionUrl = (name, pathSuffix) => {
       : 'without a path'
     throw new Error(`${name} must be an HTTPS URL ${expected}.`)
   }
+
+  return url
 }
 
 export default defineConfig(() => {
   if (process.env.VERCEL === '1') {
-    validateProductionUrl('VITE_AUTH_API_URL', '/api/auth')
-    validateProductionUrl('VITE_CRM_API_URL', '/api')
+    const authUrl = validateProductionUrl('VITE_AUTH_API_URL', '/api/auth')
+    const crmUrl = validateProductionUrl('VITE_CRM_API_URL', '/api')
     validateProductionUrl('VITE_SOCKET_URL')
+
+    if (authUrl.origin === crmUrl.origin) {
+      throw new Error(
+        'VITE_AUTH_API_URL must point to the separately deployed auth service, not the CRM service.'
+      )
+    }
   }
 
   return {

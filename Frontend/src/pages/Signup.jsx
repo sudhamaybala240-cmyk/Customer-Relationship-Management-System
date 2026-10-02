@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSignupMutation } from "../store/api/AuthApi";
+import {
+  getAuthApiConfigurationError,
+  isAuthApiConfigured,
+} from "../config/apiUrls";
 import "../style/Login.css";
 
 function Signup() {
@@ -20,6 +24,11 @@ function Signup() {
     setError("");
     setSuccess("");
 
+    if (import.meta.env.PROD && !isAuthApiConfigured) {
+      setError(getAuthApiConfigurationError());
+      return;
+    }
+
     try {
       await signup({
         companyName,
@@ -34,9 +43,31 @@ function Signup() {
         navigate("/login");
       }, 1000);
     } catch (error) {
+      if (error?.status === "FETCH_ERROR") {
+        setError(
+          "Unable to reach the authentication service. Check its deployment and CORS settings."
+        );
+        return;
+      }
+
+      if (error?.status === "PARSING_ERROR") {
+        setError("The authentication service returned an invalid response.");
+        return;
+      }
+
+      if (error?.status === 404) {
+        setError(
+          "The authentication signup endpoint was not found. VITE_AUTH_API_URL must point to the deployed auth service, not the CRM API."
+        );
+        return;
+      }
+
       setError(
         error?.data?.message ||
           error?.data?.error ||
+          (error?.status >= 500
+            ? "The authentication service is unavailable. Please try again later."
+            : "") ||
           "Unable to create account. Please try again."
       );
     }

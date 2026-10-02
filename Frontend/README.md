@@ -32,10 +32,11 @@ new deployment.
 
 All three variables must be set for Vercel Production, Preview, and Development
 deployments. Vercel builds validate that each is a public HTTPS URL and that
-the API URLs end in `/api/auth` and `/api`, respectively. The auth API is a
-separate backend service from the CRM API; the production frontend does not use
-`localhost:5000`. If the auth URL is missing from another deployment, the login
-page shows a configuration message instead of attempting a local URL.
+the API URLs end in `/api/auth` and `/api`, respectively. The auth URL must use
+a different service origin from the CRM URL. The auth API is a separate backend
+service from the CRM API; the production frontend does not use `localhost:5000`.
+If the auth URL is missing from another deployment, the login and signup pages
+show a configuration message instead of attempting a local URL.
 
 The backend CORS configuration allows the following frontend origins:
 
