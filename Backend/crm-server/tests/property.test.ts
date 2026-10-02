@@ -2,6 +2,18 @@ import request from "supertest";
 import app from "../src/app";
 
 describe("Property API", () => {
+  it.each([
+    "https://customer-relationship-management-system-b7qvwpq7c.vercel.app",
+    "https://customer-relationship-managemen-git-5f3c3d-sudhamaybala240-cmyk.vercel.app",
+  ])("allows browser requests from %s", async (origin) => {
+    const response = await request(app)
+      .options("/api/properties")
+      .set("Origin", origin)
+      .set("Access-Control-Request-Method", "GET");
+
+    expect(response.headers["access-control-allow-origin"]).toBe(origin);
+  });
+
   it("should report that the API is not ready before database initialization", async () => {
     const response = await request(app).get("/health");
 

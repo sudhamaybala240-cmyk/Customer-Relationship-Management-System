@@ -13,12 +13,20 @@ import exportRoutes from "./routes/exportRoutes";
 
 const app = express();
 let databaseReady = false;
-const allowedOrigins = [
+const defaultAllowedOrigins = [
   "http://localhost:9430",
   "http://127.0.0.1:9430",
   "https://customer-relationship-management-sy-nine.vercel.app",
-  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
+  "https://customer-relationship-management-system-b7qvwpq7c.vercel.app",
+  "https://customer-relationship-managemen-git-5f3c3d-sudhamaybala240-cmyk.vercel.app",
 ];
+const configuredOrigins = [
+  process.env.FRONTEND_URL,
+  ...(process.env.FRONTEND_URLS?.split(",") ?? []),
+].filter(
+  (origin): origin is string => typeof origin === "string" && origin.trim().length > 0,
+).map((origin) => origin.trim().replace(/\/+$/, ""));
+const allowedOrigins = [...new Set([...defaultAllowedOrigins, ...configuredOrigins])];
 
 app.use(
   cors({

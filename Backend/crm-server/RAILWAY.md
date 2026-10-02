@@ -23,6 +23,5 @@ variables, make sure they are mapped from the MySQL service into the CRM API
 service. The API listens on its assigned port while initializing the database;
 `/health` remains HTTP 503 until the database is reachable.
 
-Set `FRONTEND_URL` to the deployed frontend origin (for example,
-`https://customer-relationship-management-sy-nine.vercel.app`) so browser API
-requests from that site pass CORS validation.
+The API allows the two supplied Vercel origins by default. Set `FRONTEND_URL`
+or comma-separated `FRONTEND_URLS` on the service if you add more origins.

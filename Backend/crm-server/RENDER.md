@@ -19,7 +19,8 @@ Proxy and set `DATABASE_URL` to the public MySQL URL/host and proxy port Railway
 provides, or deploy the CRM API on Railway in the same private network as MySQL.
 A Render PostgreSQL URL is not compatible with this MySQL service.
 
-Set `FRONTEND_URL` to the deployed Vercel site origin. The service opens its
-HTTP port before initializing MySQL. Its `/health` endpoint returns HTTP 503
-until the database connection, schema initialization, and startup checks
-succeed, so Render can report database readiness accurately.
+The API allows the two supplied Vercel origins by default. You can also set
+`FRONTEND_URL` or comma-separated `FRONTEND_URLS` to additional exact origins.
+The service opens its HTTP port before initializing MySQL. Its `/health`
+endpoint returns HTTP 503 until the database connection, schema initialization,
+and startup checks succeed, so Render can report database readiness accurately.

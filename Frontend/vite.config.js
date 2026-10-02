@@ -1,14 +1,46 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
-export default defineConfig(() => {
-  if (
-    process.env.VERCEL === '1' &&
-    !process.env.VITE_AUTH_API_URL?.trim()
-  ) {
+const validateProductionUrl = (name, pathSuffix) => {
+  const value = process.env[name]?.trim()
+
+  if (!value) {
     throw new Error(
-      'VITE_AUTH_API_URL is required on Vercel. Set it to the deployed authentication service URL ending in /api/auth, then redeploy.'
+      `${name} is required on Vercel. Set it to the public deployed service URL, then redeploy.`
     )
+  }
+
+  let url
+  try {
+    url = new URL(value)
+  } catch {
+    throw new Error(`${name} must be an absolute HTTPS URL.`)
+  }
+
+  if (
+    url.protocol !== 'https:' ||
+    url.username ||
+    url.password ||
+    url.search ||
+    url.hash
+  ) {
+    throw new Error(`${name} must be a public HTTPS URL without credentials or query parameters.`)
+  }
+
+  const pathname = url.pathname.replace(/\/+$/, '')
+  if (pathSuffix ? !pathname.endsWith(pathSuffix) : pathname !== '') {
+    const expected = pathSuffix
+      ? `ending in ${pathSuffix}`
+      : 'without a path'
+    throw new Error(`${name} must be an HTTPS URL ${expected}.`)
+  }
+}
+
+export default defineConfig(() => {
+  if (process.env.VERCEL === '1') {
+    validateProductionUrl('VITE_AUTH_API_URL', '/api/auth')
+    validateProductionUrl('VITE_CRM_API_URL', '/api')
+    validateProductionUrl('VITE_SOCKET_URL')
   }
 
   return {
