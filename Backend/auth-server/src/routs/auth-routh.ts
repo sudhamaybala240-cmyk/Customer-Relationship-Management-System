@@ -196,6 +196,11 @@ router.post("/login", async (req, res) => {
         message: "This account is not assigned to a workspace. Contact an administrator.",
       });
     }
+    if (!user.passwordHash) {
+      return res.status(409).json({
+        message: "This account does not have a password set. Contact an administrator.",
+      });
+    }
 
     const tenantProfile = await TenantProfile.findByPk(user.tenantId);
     if (tenantProfile?.status === "SUSPENDED") {

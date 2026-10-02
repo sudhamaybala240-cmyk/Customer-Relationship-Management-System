@@ -28,6 +28,12 @@ export const ensureTenantProfileSchema = async () => {
       allowNull: true,
     });
   }
+  if (!userColumns.passwordHash) {
+    await queryInterface.addColumn("users", "passwordHash", {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    });
+  }
   if (!userColumns.status) {
     await queryInterface.addColumn("users", "status", {
       type: DataTypes.ENUM("ACTIVE", "DEACTIVATED"),
