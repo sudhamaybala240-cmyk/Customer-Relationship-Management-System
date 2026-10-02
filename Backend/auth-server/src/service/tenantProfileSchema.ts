@@ -48,6 +48,18 @@ export const ensureTenantProfileSchema = async () => {
   }
 
   const userColumns = await queryInterface.describeTable("users");
+  const userIdColumn = userColumns.id;
+  if (!userIdColumn) {
+    throw new Error("The auth users table is missing its id column.");
+  }
+  if (!userIdColumn.autoIncrement) {
+    await queryInterface.changeColumn("users", "id", {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      autoIncrement: true,
+      ...(!userIdColumn.primaryKey && { primaryKey: true }),
+    });
+  }
   if (!userColumns.tenantId) {
     await queryInterface.addColumn("users", "tenantId", {
       type: DataTypes.INTEGER.UNSIGNED,
