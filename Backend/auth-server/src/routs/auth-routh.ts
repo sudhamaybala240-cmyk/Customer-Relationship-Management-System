@@ -53,6 +53,19 @@ import {
 
 const router = Router();
 
+const parseTenantId = (value: unknown): number | undefined => {
+  if (typeof value === "number") {
+    return Number.isSafeInteger(value) && value > 0 ? value : undefined;
+  }
+
+  if (typeof value !== "string" || !/^[1-9]\d*$/.test(value)) {
+    return undefined;
+  }
+
+  const tenantId = Number(value);
+  return Number.isSafeInteger(tenantId) ? tenantId : undefined;
+};
+
 const withTenantAdminLock = async <T>(
   tenantId: number,
   operation: (transaction: Transaction) => Promise<T>
@@ -191,7 +204,8 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    if (!Number.isInteger(user.tenantId)) {
+    const tenantId = parseTenantId(user.tenantId);
+    if (tenantId === undefined) {
       return res.status(409).json({
         message: "This account is not assigned to a workspace. Contact an administrator.",
       });
@@ -202,7 +216,7 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const tenantProfile = await TenantProfile.findByPk(user.tenantId);
+    const tenantProfile = await TenantProfile.findByPk(tenantId);
     if (tenantProfile?.status === "SUSPENDED") {
       return res.status(403).json({ message: "This workspace is suspended." });
     }
@@ -246,14 +260,14 @@ router.post("/login", async (req, res) => {
     // Create short-lived access token
     const accessToken = await createAccessToken({
       userId: user.id,
-      tenantId: user.tenantId,
+      tenantId,
       role: user.role,
     });
 
     // Create refresh token
     const refreshToken = await createRefreshToken({
       userId: user.id,
-      tenantId: user.tenantId,
+      tenantId,
       role: user.role,
     });
 
@@ -266,7 +280,7 @@ router.post("/login", async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        tenantId: user.tenantId,
+        tenantId,
       },
     });
   } catch (error) {
