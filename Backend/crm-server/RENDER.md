@@ -12,9 +12,12 @@ Configure the Render web service with:
 
 Set `DATABASE_URL` to the connection URL for a reachable MySQL database, in the
 form `mysql://USER:PASSWORD@HOST:PORT/DATABASE`. Do not commit the real URL.
-If the database is hosted on Railway, use its public TCP proxy URL when
-connecting from Render; Railway's private service hostname is not reachable
-from Render. A Render PostgreSQL URL is not compatible with this MySQL service.
+If the database is hosted on Railway, **do not use a hostname ending in
+`.railway.internal`** in Render. That address only resolves within Railway's
+private network and causes `getaddrinfo ENOTFOUND`. Enable Railway's MySQL TCP
+Proxy and set `DATABASE_URL` to the public MySQL URL/host and proxy port Railway
+provides, or deploy the CRM API on Railway in the same private network as MySQL.
+A Render PostgreSQL URL is not compatible with this MySQL service.
 
 Set `FRONTEND_URL` to the deployed Vercel site origin. The service opens its
 HTTP port before initializing MySQL. Its `/health` endpoint returns HTTP 503

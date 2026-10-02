@@ -51,10 +51,22 @@ const parseDatabaseUrl = (databaseUrl: string, variableName: string): DatabaseCo
   };
 };
 
+const assertHostAvailableFromPlatform = (host: string, env: NodeJS.ProcessEnv) => {
+  const isRender = env.RENDER === "true" || Boolean(env.RENDER_SERVICE_ID);
+  if (isRender && host.toLowerCase().endsWith(".railway.internal")) {
+    throw new Error(
+      "The MySQL host uses Railway's private .railway.internal network and cannot be resolved from Render. " +
+      "Enable Railway's MySQL TCP Proxy and use its public connection URL, or deploy the CRM API on Railway in the same private network.",
+    );
+  }
+};
+
 export const getDatabaseConfig = (env: NodeJS.ProcessEnv = process.env): DatabaseConfig => {
   const databaseUrl = firstDefined(env, "DATABASE_URL", "MYSQL_URL");
   if (databaseUrl) {
-    return parseDatabaseUrl(databaseUrl.value, databaseUrl.name);
+    const config = parseDatabaseUrl(databaseUrl.value, databaseUrl.name);
+    assertHostAvailableFromPlatform(config.host, env);
+    return config;
   }
 
   const portEnv = firstDefined(env, "MYSQLPORT", "MYSQL_PORT");
@@ -80,6 +92,8 @@ export const getDatabaseConfig = (env: NodeJS.ProcessEnv = process.env): Databas
       "Set DATABASE_URL/MYSQL_URL or map the Railway MySQL service variables to this service.",
     );
   }
+
+  assertHostAvailableFromPlatform(host.value, env);
 
   return {
     host: host.value,

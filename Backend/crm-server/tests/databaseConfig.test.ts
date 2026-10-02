@@ -33,6 +33,36 @@ describe("MySQL environment configuration", () => {
     });
   });
 
+  it("rejects Railway private database hostnames when running on Render", () => {
+    expect(() =>
+      getDatabaseConfig({
+        RENDER: "true",
+        DATABASE_URL: "mysql://user:password@mysql.railway.internal:3306/crm",
+      }),
+    ).toThrow("cannot be resolved from Render");
+
+    expect(() =>
+      getDatabaseConfig({
+        RENDER_SERVICE_ID: "render-service-id",
+        MYSQLHOST: "mysql.railway.internal",
+        MYSQLDATABASE: "crm",
+        MYSQLUSER: "user",
+        MYSQLPASSWORD: "password",
+      }),
+    ).toThrow("Enable Railway's MySQL TCP Proxy");
+  });
+
+  it("allows Railway's private hostname when the app is not running on Render", () => {
+    expect(
+      getDatabaseConfig({
+        MYSQLHOST: "mysql.railway.internal",
+        MYSQLDATABASE: "crm",
+        MYSQLUSER: "user",
+        MYSQLPASSWORD: "password",
+      }).host,
+    ).toBe("mysql.railway.internal");
+  });
+
   it("keeps supporting the underscored local environment variable names", () => {
     expect(
       getDatabaseConfig({
