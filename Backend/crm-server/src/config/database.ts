@@ -1,6 +1,5 @@
 import { Sequelize } from "sequelize";
 import dotenv = require("dotenv");
-import mysql from "mysql2/promise";
 
 dotenv.config();
 
@@ -12,18 +11,44 @@ const requiredEnv = (name: string): string => {
   return value;
 };
 
-const port = Number(process.env.MYSQL_PORT ?? 3306);
-if (!Number.isInteger(port) || port < 1 || port > 65535) {
-  throw new Error("MYSQL_PORT must be an integer between 1 and 65535");
-}
+const getDbConfigFromUrl = () => {
+  const databaseUrl = process.env.DATABASE_URL;
 
-const dbConfig = {
-  host: process.env.MYSQL_HOST ?? "localhost",
-  port,
-  database: requiredEnv("MYSQL_DATABASE"),
-  user: requiredEnv("MYSQL_USER"),
-  password: requiredEnv("MYSQL_PASSWORD"),
+  if (!databaseUrl) {
+    return null;
+  }
+
+  const url = new URL(databaseUrl);
+
+  if (url.protocol !== "mysql:") {
+    throw new Error("DATABASE_URL must use the mysql protocol");
+  }
+
+  return {
+    host: url.hostname,
+    port: Number(url.port || 3306),
+    database: decodeURIComponent(url.pathname.replace(/^\/+/, "")),
+    user: decodeURIComponent(url.username),
+    password: decodeURIComponent(url.password),
+  };
 };
+
+const legacyDbConfig = () => {
+  const port = Number(process.env.MYSQL_PORT ?? 3306);
+  if (!Number.isInteger(port) || port < 1 || port > 65535) {
+    throw new Error("MYSQL_PORT must be an integer between 1 and 65535");
+  }
+
+  return {
+    host: process.env.MYSQL_HOST ?? "localhost",
+    port,
+    database: requiredEnv("MYSQL_DATABASE"),
+    user: requiredEnv("MYSQL_USER"),
+    password: requiredEnv("MYSQL_PASSWORD"),
+  };
+};
+
+const dbConfig = getDbConfigFromUrl() ?? legacyDbConfig();
 
 const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
   host: dbConfig.host,
@@ -31,27 +56,5 @@ const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passw
   dialect: "mysql",
   logging: false,
 });
-
-export const ensureDatabaseExists = async (): Promise<boolean> => {
-  try {
-    const connection = await mysql.createConnection({
-      host: dbConfig.host,
-      port: dbConfig.port,
-      user: dbConfig.user,
-      password: dbConfig.password,
-      database: "mysql",
-    });
-
-    await connection.execute(`CREATE DATABASE IF NOT EXISTS \`${dbConfig.database}\``);
-    await connection.end();
-    return true;
-  } catch (error) {
-    console.warn(
-      "Database unavailable; continuing without persistence.",
-      error instanceof Error ? error.message : error,
-    );
-    return false;
-  }
-};
 
 export default sequelize;
