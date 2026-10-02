@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Chart from "react-apexcharts";
-import { useNavigate } from "react-router-dom";
 import { useGetDashboardQuery } from "../store/api/dashboardApi";
 import "../style/Dassbord.css";
 
@@ -73,7 +72,6 @@ const formatPercent = (value) => {
 };
 
 function Dashboard() {
-  const navigate = useNavigate();
   const [draftRange, setDraftRange] = useState(getDefaultRange());
   const [range, setRange] = useState(getDefaultRange());
 

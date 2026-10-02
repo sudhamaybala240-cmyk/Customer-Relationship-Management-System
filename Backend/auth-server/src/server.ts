@@ -12,10 +12,16 @@ dotenv.config();
 const app = express();
 
 const port = Number(process.env.PORT ?? 5000);
+const allowedOrigins = [
+  "http://localhost:9430",
+  "http://127.0.0.1:9430",
+  "https://customer-relationship-management-sy-nine.vercel.app",
+  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
+];
 
 app.use(
   cors({
-    origin: ["http://localhost:9430", "http://127.0.0.1:9430"],
+    origin: allowedOrigins,
     credentials: true,
   })
 );

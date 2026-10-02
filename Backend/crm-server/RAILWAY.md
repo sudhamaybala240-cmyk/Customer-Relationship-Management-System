@@ -16,3 +16,7 @@ Replace `MySQL` with the exact name of your Railway MySQL service. Do not paste
 the database URL into source control. The referenced URL must use the `mysql://`
 protocol and point to the database created by Railway. The API verifies this
 database at startup and exits with an error if the connection fails.
+
+Set `FRONTEND_URL` to the deployed frontend origin (for example,
+`https://customer-relationship-management-sy-nine.vercel.app`) so browser API
+requests from that site pass CORS validation.

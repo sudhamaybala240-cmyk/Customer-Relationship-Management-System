@@ -12,16 +12,17 @@ import dashboardRoutes from "./routes/dashboardRoutes";
 import exportRoutes from "./routes/exportRoutes";
 
 const app = express();
+let databaseReady = false;
+const allowedOrigins = [
+  "http://localhost:9430",
+  "http://127.0.0.1:9430",
+  "https://customer-relationship-management-sy-nine.vercel.app",
+  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
+];
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:9430",
-      "http://127.0.0.1:9430",
-      "https://customer-relationship-management-system-fy7k.onrender.com",
-      "https://customer-relationship-management-sy-nine.vercel.app",
-      "https://*.onrender.com",
-    ],
+    origin: allowedOrigins,
     credentials: true,
   })
 );
@@ -29,11 +30,18 @@ app.use(express.json());
 app.use(requestLogger);
 
 app.get("/health", (_req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "CRM API is running",
+  res.status(databaseReady ? 200 : 503).json({
+    success: databaseReady,
+    status: databaseReady ? "ready" : "database_unavailable",
+    message: databaseReady
+      ? "CRM API is ready"
+      : "CRM API is running but the database is not ready",
   });
 });
+
+export const setDatabaseReady = (ready: boolean) => {
+  databaseReady = ready;
+};
 
 app.use("/api/properties", propertyRoutes);
 app.use("/api/property-activities", propertyActivityRoutes);

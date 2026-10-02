@@ -1,16 +1,42 @@
-# React + Vite
+# Frontend deployment
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+## Vercel
 
-Currently, two official plugins are available:
+The repository-root `vercel.json` builds the `Frontend` package and serves its
+`dist` output, including a rewrite fallback so refreshing client-side routes
+such as `/properties` does not return a Vercel 404. A `vercel.json` is also
+provided inside `Frontend` for deployments whose Vercel **Root Directory** is
+set to `Frontend`.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+For the repository-root configuration, leave Vercel's **Root Directory** at
+the repository root and allow the checked-in `vercel.json` to control the
+install command, build command, output directory, and route rewrites. If you
+choose `Frontend` as the Vercel Root Directory instead, use `npm ci` as the
+install command, `npm run build` as the build command, and `dist` as the
+output directory.
 
-## React Compiler
+Set these variables for **Production**, **Preview**, and **Development** in
+Vercel, then redeploy:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Variable | Value |
+| --- | --- |
+| `VITE_AUTH_API_URL` | Auth backend origin plus `/api/auth` |
+| `VITE_CRM_API_URL` | CRM backend origin plus `/api` |
+| `VITE_SOCKET_URL` | CRM backend origin, without a path |
 
-## Expanding the Oxlint configuration
+The auth and CRM backends are separate services in this repository. Use the
+public URL of each corresponding deployed service; do not point both variables
+to one service unless that service is explicitly configured to host both APIs.
+These `VITE_` values are embedded at build time, so changing them requires a
+new deployment.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+Configure `FRONTEND_URL` on both backend services to the frontend origin, for
+example `https://customer-relationship-management-sy-nine.vercel.app`. The
+backend CORS configuration allows that origin and the local development
+origins.
+
+## Local development
+
+Copy `.env.example` to `.env` and replace its placeholder service URLs with
+your actual local or deployed API URLs. The Vite development server proxies
+relative `/api` and `/socket.io` requests to the local backend ports.

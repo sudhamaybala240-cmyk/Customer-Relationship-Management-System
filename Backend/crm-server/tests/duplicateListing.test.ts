@@ -12,6 +12,10 @@ jest.mock("../src/services/cacheService", () => ({
   setCachedData: jest.fn()
 }));
 
+jest.mock("../src/services/propertyActivityService", () => ({
+  createActivity: jest.fn().mockResolvedValue(undefined)
+}));
+
 describe("Duplicate Listing", () => {
   beforeEach(() => {
     jest.clearAllMocks();

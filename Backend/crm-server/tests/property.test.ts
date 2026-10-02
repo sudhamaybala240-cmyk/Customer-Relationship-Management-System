@@ -2,6 +2,16 @@ import request from "supertest";
 import app from "../src/app";
 
 describe("Property API", () => {
+  it("should report that the API is not ready before database initialization", async () => {
+    const response = await request(app).get("/health");
+
+    expect(response.status).toBe(503);
+    expect(response.body).toMatchObject({
+      success: false,
+      status: "database_unavailable",
+    });
+  });
+
   it("should reject requests without authentication", async () => {
     const response = await request(app)
       .get("/api/properties");

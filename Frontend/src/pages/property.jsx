@@ -25,7 +25,6 @@ const STATUSES = [
   "Closed",
   "Withdrawn",
 ];
-const PROPERTY_TYPES = ["Apartment", "Villa", "Plot", "Commercial"];
 const AMENITIES = ["Parking", "Lift", "Security", "Swimming Pool", "Gym", "Club House", "Power Backup", "Garden", "CCTV"];
 
 const PROPERTY_COLUMNS = [
@@ -347,9 +346,6 @@ function Properties() {
 
   const agents = filterOptionsResult?.data?.agents || [];
   const localities = filterOptionsResult?.data?.localities || [];
-  const propertyTypes = filterOptionsResult?.data?.propertyTypes?.length
-    ? filterOptionsResult.data.propertyTypes
-    : PROPERTY_TYPES;
   const statusOptions = filterOptionsResult?.data?.statuses?.length
     ? filterOptionsResult.data.statuses
     : STATUSES;
