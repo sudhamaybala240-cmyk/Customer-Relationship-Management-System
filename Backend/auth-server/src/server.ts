@@ -71,7 +71,7 @@ const startServer = async () => {
   } catch (error) {
     databaseReady = false;
     console.error(
-      "Auth database initialization failed. Set AUTH_DATABASE_URL to a reachable MySQL database reserved for auth (not the CRM database). /api/health will return 503 until the database is ready.",
+      "Auth database initialization failed. Set AUTH_MYSQL_PUBLIC_URL or AUTH_DATABASE_URL to a reachable MySQL URL for the dedicated auth database (not the CRM database). On Render with Railway MySQL, use Railway's public URL rather than a *.railway.internal hostname. /api/health will return 503 until the database is ready.",
       error,
     );
   }

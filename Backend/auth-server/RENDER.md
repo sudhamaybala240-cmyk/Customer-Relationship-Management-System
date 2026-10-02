@@ -7,12 +7,18 @@ Configure the Render web service with:
 - **Start Command:** `npm start`
 - **Health Check Path:** `/api/health`
 
-Set `AUTH_DATABASE_URL` in the Render service's **Environment** settings to a
-reachable MySQL connection URL. The auth service needs a database separate
-from the CRM database because their `users` tables have different schemas.
-Do not use `localhost` or a Railway `*.railway.internal` hostname from Render.
-If the auth database is on Railway, enable its TCP Proxy and use the public
-connection URL. Keep this URL private and out of source control.
+Set `AUTH_MYSQL_PUBLIC_URL` in the Render service's **Environment** settings
+to a reachable MySQL connection URL. This variable takes precedence over
+`AUTH_DATABASE_URL`, allowing a public Railway URL to override an old private
+Railway URL. The auth service needs a database separate from the CRM database
+because their `users` tables have different schemas. Do not use `localhost`
+or a Railway `*.railway.internal` hostname from Render.
+
+If the auth database is on Railway, open its **Settings → Networking**, enable
+**Public Networking/TCP Proxy**, and copy Railway's public MySQL connection
+URL into Render as `AUTH_MYSQL_PUBLIC_URL`. Keep this URL private and out of
+source control. Redeploy the auth service and check `/api/health`; it must
+return HTTP 200 before login or signup can work.
 
 Set `FRONTEND_URLS` to the comma-separated list of allowed Vercel origins:
 
