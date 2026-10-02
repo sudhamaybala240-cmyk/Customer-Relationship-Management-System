@@ -34,6 +34,12 @@ export const ensureTenantProfileSchema = async () => {
       allowNull: true,
     });
   }
+  if (!userColumns.createdAt) {
+    await queryInterface.addColumn("users", "createdAt", {
+      type: DataTypes.DATE,
+      allowNull: true,
+    });
+  }
   if (!userColumns.status) {
     await queryInterface.addColumn("users", "status", {
       type: DataTypes.ENUM("ACTIVE", "DEACTIVATED"),
