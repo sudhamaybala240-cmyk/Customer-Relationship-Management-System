@@ -42,7 +42,7 @@ const startServer = async () => {
   } catch (error) {
     setDatabaseReady(false);
     console.error(
-      "CRM database initialization failed. Set DATABASE_URL or MYSQL_URL to a reachable mysql:// URL, or map MYSQLHOST, MYSQLPORT, MYSQLDATABASE, MYSQLUSER, and MYSQLPASSWORD into this service. Do not use localhost for a separately hosted database. The service is listening, but /health will return 503 until initialization succeeds.",
+      "CRM database initialization failed. On Render with Railway MySQL, set MYSQL_PUBLIC_URL to Railway's public MySQL connection URL, or replace DATABASE_URL with that URL. Do not use the private MYSQL_URL or a *.railway.internal hostname. Alternatively, deploy the CRM API on Railway in the same private network as MySQL. The service is listening, but /health will return 503 until initialization succeeds.",
       error,
     );
   }

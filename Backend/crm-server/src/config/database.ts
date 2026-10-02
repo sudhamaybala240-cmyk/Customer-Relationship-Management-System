@@ -62,7 +62,12 @@ const assertHostAvailableFromPlatform = (host: string, env: NodeJS.ProcessEnv) =
 };
 
 export const getDatabaseConfig = (env: NodeJS.ProcessEnv = process.env): DatabaseConfig => {
-  const databaseUrl = firstDefined(env, "DATABASE_URL", "MYSQL_URL");
+  const databaseUrl = firstDefined(
+    env,
+    "MYSQL_PUBLIC_URL",
+    "DATABASE_URL",
+    "MYSQL_URL",
+  );
   if (databaseUrl) {
     const config = parseDatabaseUrl(databaseUrl.value, databaseUrl.name);
     assertHostAvailableFromPlatform(config.host, env);
@@ -89,7 +94,7 @@ export const getDatabaseConfig = (env: NodeJS.ProcessEnv = process.env): Databas
     ].filter(Boolean);
     throw new Error(
       `Missing MySQL environment variable(s): ${missing.join(", ")}. ` +
-      "Set DATABASE_URL/MYSQL_URL or map the Railway MySQL service variables to this service.",
+      "Set MYSQL_PUBLIC_URL, DATABASE_URL, or MYSQL_URL to a reachable MySQL URL, or map the MySQL service variables to this service.",
     );
   }
 

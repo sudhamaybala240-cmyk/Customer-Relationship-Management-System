@@ -15,6 +15,22 @@ describe("MySQL environment configuration", () => {
     });
   });
 
+  it("prefers Railway's public URL when both public and private URLs are present", () => {
+    expect(
+      getDatabaseConfig({
+        MYSQL_PUBLIC_URL: "mysql://railway-user:public-password@trolley.proxy.rlwy.net:45678/crm",
+        DATABASE_URL: "mysql://railway-user:private-password@mysql.railway.internal:3306/crm",
+        RENDER: "true",
+      }),
+    ).toEqual({
+      host: "trolley.proxy.rlwy.net",
+      port: 45678,
+      database: "crm",
+      user: "railway-user",
+      password: "public-password",
+    });
+  });
+
   it("supports Railway's native MySQL variable names", () => {
     expect(
       getDatabaseConfig({
@@ -83,7 +99,7 @@ describe("MySQL environment configuration", () => {
 
   it("reports how to fix missing database variables", () => {
     expect(() => getDatabaseConfig({})).toThrow(
-      "Set DATABASE_URL/MYSQL_URL or map the Railway MySQL service variables to this service.",
+      "Set MYSQL_PUBLIC_URL, DATABASE_URL, or MYSQL_URL to a reachable MySQL URL",
     );
   });
 });
